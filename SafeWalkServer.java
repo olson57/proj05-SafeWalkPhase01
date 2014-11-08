@@ -10,14 +10,14 @@ public class SafeWalkServer implements Runnable {
 
     public SafeWalkServer(int port) throws SocketException, IOException {
     	if (isValidPort(port)) {
-    		ServerSocket s = new ServerSocket(port);
+    		socket = new ServerSocket(port);
     	} else {
 
     	}
     }
 
     public SafeWalkServer() throws SocketException, IOException{
-    	ServerSocket s = new ServerSocket(DEFAULT_PORT);
+    	socket = new ServerSocket(DEFAULT_PORT);
     }
 
     public int getLocalPort() {
@@ -26,7 +26,7 @@ public class SafeWalkServer implements Runnable {
 
     public void run() {
     	while (true) {
-
+    		
     	}
     }
 
