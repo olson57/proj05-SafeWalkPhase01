@@ -13,7 +13,7 @@ public class SafeWalkServer {
 
     }
 
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    	ServerSocket serverSocket = new ServerSocket(0);
     }		
 }
