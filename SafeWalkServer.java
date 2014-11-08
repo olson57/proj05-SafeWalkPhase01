@@ -1,4 +1,5 @@
-import java.net.ServerSocket;
+import java.io.*;
+import java.net.*;
 
 public class SafeWalkServer {
 	public final String[] LOCS = {"CL50", "EE", "LWSN", 
@@ -13,6 +14,6 @@ public class SafeWalkServer {
     }
 
     public static void main(String[] args) {
-    	
+
     }		
 }
