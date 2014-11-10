@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 public class SafeWalkServer implements Runnable {
 	public final String[] LOCS = {"CL50", "EE", "LWSN", 
@@ -7,27 +8,44 @@ public class SafeWalkServer implements Runnable {
     private int port;
     private ServerSocket socket;
     public static final int DEFAULT_PORT = 4242;
+    private ArrayList<Socket> clients;
 
     public SafeWalkServer(int port) throws SocketException, IOException {
     	if (isValidPort(port)) {
     		socket = new ServerSocket(port);
+    		clients = new ArrayList<Socket>();
     	} else {
     		System.out.printf("Invalid port.");
     	}
     }
 
     public SafeWalkServer() throws SocketException, IOException{
-    	socket = new ServerSocket(DEFAULT_PORT);
+    	socket = new ServerSocket(DEFAULT_PORT); 
+    	clients = new ArrayList<Socket>();
     }
 
     public int getLocalPort() {
     	return port;
     }
 
+    public synchronized void pairClients(Socket s) {
+    	for (int i = 0; i < clients.size(); i++) {
+    		if (sameStartingLocation(clients.get(i), s)) {
+    			//check destination.
+    		}
+    	}
+    }
+
+    private boolean sameStartingLocation(Socket client1, Socket client2) {
+    	return false;
+    }
+
     public void run() {
     	while (true) {
     		try {
     			Socket client = socket.accept();
+    			clients.add(client);
+    			pairClients(client);
     		} catch (IOException e) {
     			e.printStackTrace();
     		}
