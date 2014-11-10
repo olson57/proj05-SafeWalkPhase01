@@ -12,7 +12,7 @@ public class SafeWalkServer implements Runnable {
     	if (isValidPort(port)) {
     		socket = new ServerSocket(port);
     	} else {
-
+    		System.out.printf("Invalid port.");
     	}
     }
 
@@ -26,13 +26,41 @@ public class SafeWalkServer implements Runnable {
 
     public void run() {
     	while (true) {
-    		
+    		//Socket client = accept();
     	}
     }
 
     private boolean isValidInput(String input) {
+    	String temp = input;
+    	int commaIndex = 0;
+    	int previousIndex = 0;
+    	int partsIndex = 0;
+    	String[] parts = new String[4];
+    	boolean validFrom = false;
+    	boolean validTo = false;
 
-    	return false;
+    	for (int i = 0; i < (temp.length() - 1); i++) {
+    		commaIndex = i;
+    		if (temp.charAt(i) == ',') {
+    			parts[partsIndex] = temp.substring(previousIndex, commaIndex);
+    			previousIndex = ++commaIndex;
+    			partsIndex++;
+    		}
+    	}
+
+    	for (int i = 0; i < (LOCS.length - 1); i++) {
+    		if (parts[1] == LOCS[i]) {
+    			validFrom = true;
+    		}
+    	}
+
+    	for (int i = 0; i < LOCS.length; i++) {
+    		if (parts[2] == LOCS[i] && parts[2] != parts[1]) {
+    			validTo = true;
+    		}
+    	}
+
+    	return (validFrom && validTo);
     }
 
     private boolean isValidPort(int port) {
