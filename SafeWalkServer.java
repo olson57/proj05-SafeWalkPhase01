@@ -26,7 +26,11 @@ public class SafeWalkServer implements Runnable {
 
     public void run() {
     	while (true) {
-    		//Socket client = accept();
+    		try {
+    			Socket client = socket.accept();
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
     	}
     }
 
