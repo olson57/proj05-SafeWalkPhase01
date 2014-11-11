@@ -8,18 +8,20 @@ public class SafeWalkServer implements Runnable {
     private int port;
     private ServerSocket socket;
     public static final int DEFAULT_PORT = 4242;
-    private ArrayList<Socket> clients;
-
+    private volatile ArrayList<Socket> clients;
+    private volatile ArrayList<String[]> clientInformation;
+    
     public SafeWalkServer(int port) throws SocketException, IOException {
         if (isValidPort(port)) {
             socket = new ServerSocket(port);
             clients = new ArrayList<Socket>();
+            clientInformation = new ArrayList<String[]>();
         } else {
             System.out.printf("Invalid port.");
         }
     }
 
-    public SafeWalkServer() throws SocketException, IOException{
+    public SafeWalkServer() throws SocketException, IOException {
         socket = new ServerSocket(DEFAULT_PORT); 
         clients = new ArrayList<Socket>();
     }
@@ -29,11 +31,7 @@ public class SafeWalkServer implements Runnable {
     }
 
     public synchronized void pairClients(Socket s) {
-        for (int i = 0; i < clients.size(); i++) {
-            if (sameStartingLocation(clients.get(i), s)) {
-                //check destination.
-            }
-        }
+        
     }
 
     private boolean sameStartingLocation(Socket client1, Socket client2) {
