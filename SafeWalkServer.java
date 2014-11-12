@@ -101,7 +101,6 @@ public class SafeWalkServer implements Runnable {
         if (port > 1025 && port < 65535) {
             return true;
         }
-
         return false;
     }
 
