@@ -31,7 +31,38 @@ public class SafeWalkServer implements Runnable {
     }
 
     public synchronized void pairClients(Socket s) {
-        
+	int indexToNotCheck = 0;
+	for (int i = 0; i < clients.size(); i++) {
+	    if (s == clients.get(i)) {
+		indexToNotCheck = i;
+		break;
+	    }
+	}
+
+	for (int i = 0; i < clientInformation.size(); i++) {
+	    if (i != indexToNotCheck) {
+		if (validPair(clientInformation.get(i), clientInformation.get(indexToNotCheck))){
+		    try { 
+			OutputStream os = clients.get(i).getOutputStream();
+			OutputStream os2 = clients.get(indexToNotCheck).getOutputStream();
+
+			PrintWriter client1 = new PrintWriter(os);
+			PrintWriter client2 = new PrintWriter(os2);
+
+			client1.println("RESPONSE: " + clientInformation.get(indexToNotCheck));
+			client1.flush();
+			
+			client2.println("RESPONSE: " + clientInformation.get(i));
+			client2.flush();
+
+			client1.close();
+			client2.close();
+		    } catch (IOException e) {
+			e.printStackTrace();
+		    }
+		}
+	    }
+	}
     }
 
     private boolean validPair(String client1Loc, String client2Loc) {
@@ -56,7 +87,7 @@ public class SafeWalkServer implements Runnable {
                  BufferedReader br = 
                  new BufferedReader(new InputStreamReader(client.getInputStream()));
                 
-                PrintWriter pw = new PrintWriter(client.getOutputStream());
+                PrintWriter pw = new PrintWriter(os);
 
                 String s = "";
                 String input = "";
