@@ -98,6 +98,14 @@ public class SafeWalkServer implements Runnable {
     		System.out.printf("Port not specified. Using free port %d", DEFAULT_PORT);
     		SafeWalkServer s = new SafeWalkServer();
     		s.run();
+    	} else {
+    		try {
+    			int port = Intger.parseInt(args[1]);
+    			SafeWalkServer s = new SafeWalkServer(port);
+    			s.run();
+    		} catch (NumberFormatExcpetion e) {
+    			e.printStackTrace();
+    		}
     	}
     }		
 }
