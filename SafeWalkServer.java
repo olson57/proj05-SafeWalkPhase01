@@ -60,7 +60,9 @@ public class SafeWalkServer implements Runnable {
         				pw.print(clientInformation.toString());
         				pw.flush();
         			} else if (input.equals(":RESET")) {
-        				
+        				for (int i = 0; i < clients.size(); i++) {
+        					clients.get(i).close();
+        				}
         			} else if (input.equals(":SHUTDOWN")) {
         				
         			}
