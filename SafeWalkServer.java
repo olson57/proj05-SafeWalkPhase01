@@ -178,7 +178,7 @@ public class SafeWalkServer implements Runnable {
     		s.run();
     	} else {
     		try {
-    			int port = Integer.parseInt(args[1]);
+    			int port = Integer.parseInt(args[0]);
     			SafeWalkServer s = new SafeWalkServer(port);
     			s.run();
     		} catch (NumberFormatException e) {
