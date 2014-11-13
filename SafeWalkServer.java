@@ -84,11 +84,14 @@ public class SafeWalkServer implements Runnable {
         while (true) {
             try {
                 Socket client = socket.accept();
-                OutputStream os = client.getOutputStream();
-                 BufferedReader br = 
-                 new BufferedReader(new InputStreamReader(client.getInputStream()));
+                ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
+                ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
+
+
+                BufferedReader br = 
+                new BufferedReader(ois);
                 
-                PrintWriter pw = new PrintWriter(os);
+                PrintWriter pw = new PrintWriter(oos);
 
                 String s = "";
                 String input = "";
