@@ -68,6 +68,16 @@ public class SafeWalkServer implements Runnable {
     }
 
     private boolean inputIsCommand(String input) {
+        if (input.contains(":")) {
+        	if (input.equals(":LIST_PENDING_REQUESTS")) {
+        		return true;
+        	} else if (input.equals(":RESET")) {
+        		return true;
+        	} else if (input.equals(":SHUTDOWN")) {
+        		return true;
+        	}
+        }
+
         return false;
     }
     
@@ -111,10 +121,10 @@ public class SafeWalkServer implements Runnable {
     		s.run();
     	} else {
     		try {
-    			int port = Intger.parseInt(args[1]);
+    			int port = Integer.parseInt(args[1]);
     			SafeWalkServer s = new SafeWalkServer(port);
     			s.run();
-    		} catch (NumberFormatExcpetion e) {
+    		} catch (NumberFormatException e) {
     			e.printStackTrace();
     		}
     	}
