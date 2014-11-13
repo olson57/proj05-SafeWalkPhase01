@@ -31,40 +31,39 @@ public class SafeWalkServer implements Runnable {
     }
 
     public synchronized void pairClients(Socket s) {
-	int indexToNotCheck = 0;
-	for (int i = 0; i < clients.size(); i++) {
-	    if (s == clients.get(i)) {
-			indexToNotCheck = i;
-			break;
-	    }
-	}
-
-	for (int i = 0; i < clientInformation.size(); i++) {
-	    if (i != indexToNotCheck) {
-		if (validPair(clientInformation.get(i), clientInformation.get(indexToNotCheck))){
-		    try { 
-			OutputStream os = clients.get(i).getOutputStream();
-			OutputStream os2 = clients.get(indexToNotCheck).getOutputStream();
-
-			PrintWriter client1 = new PrintWriter(os,true);
-			PrintWriter client2 = new PrintWriter(os2,true);
-
-			client1.println("RESPONSE: " + clientInformation.get(indexToNotCheck));
-			client1.flush();
-			
-			client2.println("RESPONSE: " + clientInformation.get(i));
-			client2.flush();
-
-			System.out.println("Got to Close");
-			client1.close();
-			client2.close();
-		    } catch (IOException e) {
-			e.printStackTrace();
-		    }
+		int socketNumber = 0;
+		for (int i = 0; i < clients.size(); i++) {
+	    	if (s == clients.get(i)) {
+				socketNumber = i;
+				break;
+	    	}
 		}
+
+		for (int i = 0; i < clientInformation.size(); i++) {
+			if (validPair(clientInformation.get(i), clientInformation.get(socketNumber))){
+		    	try { 
+				OutputStream os = clients.get(i).getOutputStream();
+				OutputStream os2 = clients.get(socketNumber).getOutputStream();
+
+				PrintWriter client1 = new PrintWriter(os,true);
+				PrintWriter client2 = new PrintWriter(os2,true);
+
+				client1.println("RESPONSE: " + clientInformation.get(socketNumber));
+				client1.flush();
+			
+				client2.println("RESPONSE: " + clientInformation.get(i));
+				client2.flush();
+
+				System.out.println("Got to Close in pairClients");
+				client1.close();
+				client2.close();
+				break;
+		    	} catch (IOException e) {
+				e.printStackTrace();
+		    	}
+			}
 	    }
 	}
-    }
 
     private boolean validPair(String client1Loc, String client2Loc) {
 	String[] client1Info = client1Loc.split(",");
