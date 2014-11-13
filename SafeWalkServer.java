@@ -57,7 +57,7 @@ public class SafeWalkServer implements Runnable {
 
                 if (inputIsCommand(input)) {
                 	if (input.equals(":LIST_PENDING_REQUESTS")) {
-        				pw.print(clientInformation.toString());
+        				pw.println(clientInformation.toString());
         				pw.flush();
         			} else if (input.equals(":RESET")) {
         				for (int i = 0; i < clients.size(); i++) {
@@ -71,6 +71,7 @@ public class SafeWalkServer implements Runnable {
         				br.close();
         				pw.close();
         				socket.close();
+        				return;
         			}
                 } else {
                     clients.add(client);
