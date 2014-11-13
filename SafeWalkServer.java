@@ -56,7 +56,14 @@ public class SafeWalkServer implements Runnable {
                 }
 
                 if (inputIsCommand(input)) {
-
+                	if (input.equals(":LIST_PENDING_REQUESTS")) {
+        				pw.print(clientInformation.toString());
+        				pw.flush();
+        			} else if (input.equals(":RESET")) {
+        				
+        			} else if (input.equals(":SHUTDOWN")) {
+        				
+        			}
                 } else {
                     clients.add(client);
                     pairClients(client); 
