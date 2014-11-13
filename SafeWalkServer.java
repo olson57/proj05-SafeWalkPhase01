@@ -34,8 +34,8 @@ public class SafeWalkServer implements Runnable {
 	int indexToNotCheck = 0;
 	for (int i = 0; i < clients.size(); i++) {
 	    if (s == clients.get(i)) {
-		indexToNotCheck = i;
-		break;
+			indexToNotCheck = i;
+			break;
 	    }
 	}
 
@@ -46,8 +46,8 @@ public class SafeWalkServer implements Runnable {
 			OutputStream os = clients.get(i).getOutputStream();
 			OutputStream os2 = clients.get(indexToNotCheck).getOutputStream();
 
-			PrintWriter client1 = new PrintWriter(os);
-			PrintWriter client2 = new PrintWriter(os2);
+			PrintWriter client1 = new PrintWriter(os,true);
+			PrintWriter client2 = new PrintWriter(os2,true);
 
 			client1.println("RESPONSE: " + clientInformation.get(indexToNotCheck));
 			client1.flush();
@@ -55,6 +55,7 @@ public class SafeWalkServer implements Runnable {
 			client2.println("RESPONSE: " + clientInformation.get(i));
 			client2.flush();
 
+			System.out.println("Got to Close");
 			client1.close();
 			client2.close();
 		    } catch (IOException e) {
@@ -92,13 +93,12 @@ public class SafeWalkServer implements Runnable {
                 String s = "";
                 String input = "";
                 while ((s = br.readLine()) != null) {
-                    input = br.readLine();
+                    input = s;
                 }
 
                 if (inputIsCommand(input)) {
                 	if (input.equals(":LIST_PENDING_REQUESTS")) {
         				pw.println(clientInformation.toString());
-        				pw.flush();
         			} else if (input.equals(":RESET")) {
         				for (int i = 0; i < clients.size(); i++) {
         					clients.get(i).close();
@@ -113,8 +113,9 @@ public class SafeWalkServer implements Runnable {
         				socket.close();
         				return;
         			}
+        			pw.flush();
                 } else {
-		    clientInformation.add(input);
+		    		clientInformation.add(input);
                     clients.add(client);
                     pairClients(client); 
                 }
