@@ -64,7 +64,13 @@ public class SafeWalkServer implements Runnable {
         					clients.get(i).close();
         				}
         			} else if (input.equals(":SHUTDOWN")) {
-        				
+        				for (int i = 0; i < clients.size(); i++) {
+        					clients.get(i).close();
+        				}
+
+        				br.close();
+        				pw.close();
+        				socket.close();
         			}
                 } else {
                     clients.add(client);
