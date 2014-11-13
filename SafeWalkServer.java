@@ -31,73 +31,68 @@ public class SafeWalkServer implements Runnable {
     }
 
     public synchronized void pairClients(Socket s) {
-		int indexToNotCheck = 0;
-		for (int i = 0; i < clients.size(); i++) {
-	    	if (s == clients.get(i)) {
-				indexToNotCheck = i;
-				System.out.println("Set indexToNotCheck in pairClients");
-				break;
-	    	}
-		}
+	int indexToNotCheck = 0;
+	for (int i = 0; i < clients.size(); i++) {
+	    if (s == clients.get(i)) {
+		indexToNotCheck = i;
+		break;
+	    }
+	}
 
-		for (int i = 0; i < clientInformation.size(); i++) {
-	    	if (i != indexToNotCheck) {
-				if (validPair(clientInformation.get(i), clientInformation.get(indexToNotCheck))){
-		    		try { 
-						OutputStream os = clients.get(i).getOutputStream();
-						OutputStream os2 = clients.get(indexToNotCheck).getOutputStream();
+	for (int i = 0; i < clientInformation.size(); i++) {
+	    if (i != indexToNotCheck) {
+		if (validPair(clientInformation.get(i), clientInformation.get(indexToNotCheck))){
+		    try { 
+			OutputStream os = clients.get(i).getOutputStream();
+			OutputStream os2 = clients.get(indexToNotCheck).getOutputStream();
 
-						PrintWriter client1 = new PrintWriter(os);
-						PrintWriter client2 = new PrintWriter(os2);
+			PrintWriter client1 = new PrintWriter(os);
+			PrintWriter client2 = new PrintWriter(os2);
 
-						client1.println("RESPONSE: " + clientInformation.get(indexToNotCheck));
-						client1.flush();
+			client1.println("RESPONSE: " + clientInformation.get(indexToNotCheck));
+			client1.flush();
 			
-						client2.println("RESPONSE: " + clientInformation.get(i));
-						client2.flush();
+			client2.println("RESPONSE: " + clientInformation.get(i));
+			client2.flush();
 
-						client1.close();
-						client2.close();
-		    		} catch (IOException e) {
-						e.printStackTrace();
-		    		}
-				}
-	    	}
+			client1.close();
+			client2.close();
+		    } catch (IOException e) {
+			e.printStackTrace();
+		    }
 		}
+	    }
+	}
     }
 
     private boolean validPair(String client1Loc, String client2Loc) {
-		String[] client1Info = client1Loc.split(",");
-		String[] client2Info = client2Loc.split(",");
+	String[] client1Info = client1Loc.split(",");
+	String[] client2Info = client2Loc.split(",");
 
-		if (client1Info[1].equals(client2Info[1])) {
-	    	if ((client1Info[2].equals("*") || client2Info[2].equals("*"))) {
-				System.out.println("Evaluated to True.");
-				return true;
-	    	}
-		}
+	if (client1Info[1].equals(client2Info[1])) {
+	    if (client1Info[2].equals("*") || client2Info[2].equals("*")) {
+		return true;
+	    }
+	}
 
-		return false;
+	return false;
     }
 
     public void run() {
         while (true) {
             try {
                 Socket client = socket.accept();
-                ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
-                ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
 
-
-                BufferedReader br = 
-                new BufferedReader(ois);
+                OutputStream os = client.getOutputStream();
+                 BufferedReader br = 
+                 new BufferedReader(new InputStreamReader(client.getInputStream()));
                 
-                PrintWriter pw = new PrintWriter(oos);
+                PrintWriter pw = new PrintWriter(os);
 
                 String s = "";
                 String input = "";
                 while ((s = br.readLine()) != null) {
                     input = br.readLine();
-                    System.out.println("Read Input: " + input);
                 }
 
                 if (inputIsCommand(input)) {
@@ -114,13 +109,12 @@ public class SafeWalkServer implements Runnable {
         				}
 
         				br.close();
-        				pw.flush();
         				pw.close();
         				socket.close();
         				return;
         			}
                 } else {
-		    		clientInformation.add(input);
+		    clientInformation.add(input);
                     clients.add(client);
                     pairClients(client); 
                 }
