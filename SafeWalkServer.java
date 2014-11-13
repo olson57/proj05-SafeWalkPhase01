@@ -34,8 +34,17 @@ public class SafeWalkServer implements Runnable {
         
     }
 
-    private boolean sameStartingLocation(Socket client1, Socket client2) {
-        return false;
+    private boolean validPair(String client1Loc, String client2Loc) {
+	String[] client1Info = client1Loc.split(",");
+	String[] client2Info = client2Loc.split(",");
+
+	if (client1Info[1].equals(client2Info[1])) {
+	    if (client1Info[2].equals("*") || client2Info[2].equals("*")) {
+		return true;
+	    }
+	}
+
+	return false;
     }
 
     public void run() {
