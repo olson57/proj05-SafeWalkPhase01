@@ -20,62 +20,31 @@ public class SafeWalkServer implements Runnable {
             System.out.printf("Invalid port.");
         }
     }
-
+    
     public SafeWalkServer() throws SocketException, IOException {
         socket = new ServerSocket(DEFAULT_PORT); 
         clients = new ArrayList<Socket>();
     }
-
+    
     public int getLocalPort() {
         return port;
     }
-
-    public synchronized void pairClients(Socket s) {
-		int socketNumber = 0;
-		for (int i = 0; i < clients.size(); i++) {
-	    	if (s == clients.get(i)) {
-				socketNumber = i;
-				break;
-	    	}
-		}
-
-		for (int i = 0; i < clientInformation.size(); i++) {
-			if (validPair(clientInformation.get(i), clientInformation.get(socketNumber))){
-		    	try { 
-				OutputStream os = clients.get(i).getOutputStream();
-				OutputStream os2 = clients.get(socketNumber).getOutputStream();
-
-				PrintWriter client1 = new PrintWriter(os,true);
-				PrintWriter client2 = new PrintWriter(os2,true);
-
-				client1.println("RESPONSE: " + clientInformation.get(socketNumber));
-				client1.flush();
-			
-				client2.println("RESPONSE: " + clientInformation.get(i));
-				client2.flush();
-
-				System.out.println("Got to Close in pairClients");
-				client1.close();
-				client2.close();
-				break;
-		    	} catch (IOException e) {
-				e.printStackTrace();
-		    	}
-			}
-	    }
-	}
+    
+    public synchronized void pairClients() {
+        
+    }
 
     private boolean validPair(String client1Loc, String client2Loc) {
-	String[] client1Info = client1Loc.split(",");
-	String[] client2Info = client2Loc.split(",");
+        String[] client1Info = client1Loc.split(",");
+        String[] client2Info = client2Loc.split(",");
 
-	if (client1Info[1].equals(client2Info[1])) {
-	    if (client1Info[2].equals("*") || client2Info[2].equals("*")) {
-		return true;
-	    }
-	}
-
-	return false;
+        if (client1Info[1].equals(client2Info[1])) {
+            if (client1Info[2].equals("*") || client2Info[2].equals("*")) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public void run() {
@@ -84,7 +53,7 @@ public class SafeWalkServer implements Runnable {
                 Socket client = socket.accept();
 
                 OutputStream os = client.getOutputStream();
-                 BufferedReader br = 
+                BufferedReader br = 
                  new BufferedReader(new InputStreamReader(client.getInputStream()));
                 
                 PrintWriter pw = new PrintWriter(os, true);
@@ -96,45 +65,46 @@ public class SafeWalkServer implements Runnable {
                 }
 
                 if (inputIsCommand(input)) {
-                	if (input.equals(":LIST_PENDING_REQUESTS")) {
-        				pw.println(clientInformation.toString());
-        			} else if (input.equals(":RESET")) {
-        				for (int i = 0; i < clients.size(); i++) {
-        					clients.get(i).close();
-        				}
-        			} else if (input.equals(":SHUTDOWN")) {
-        				for (int i = 0; i < clients.size(); i++) {
-        					clients.get(i).close();
-        				}
-
-        				br.close();
-        				pw.close();
-        				socket.close();
-        				return;
-        			}
-        			pw.flush();
+                    if (input.equals(":LIST_PENDING_REQUESTS")) {
+                        pw.println(clientInformation.toString());
+                    } else if (input.equals(":RESET")) {
+                        for (int i = 0; i < clients.size(); i++) {
+                            clients.get(i).close();
+                        }
+                    } else if (input.equals(":SHUTDOWN")) {
+                        for (int i = 0; i < clients.size(); i++) {
+                            clients.get(i).close();
+                        }
+                        
+                        br.close();
+                        pw.flush();
+                        pw.close();
+                        socket.close();
+                        return;
+                    }
+                    pw.flush();
                 } else {
-		    		clientInformation.add(input);
+                    clientInformation.add(input);
                     clients.add(client);
-                    pairClients(client); 
+                    pairClients(); 
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-
+    
     private boolean inputIsCommand(String input) {
         if (input.contains(":")) {
-        	if (input.equals(":LIST_PENDING_REQUESTS")) {
-        		return true;
-        	} else if (input.equals(":RESET")) {
-        		return true;
-        	} else if (input.equals(":SHUTDOWN")) {
-        		return true;
-        	}
+            if (input.equals(":LIST_PENDING_REQUESTS")) {
+                return true;
+            } else if (input.equals(":RESET")) {
+                return true;
+            } else if (input.equals(":SHUTDOWN")) {
+                return true;
+            }
         }
-
+        
         return false;
     }
     
@@ -144,11 +114,11 @@ public class SafeWalkServer implements Runnable {
         boolean validTo = false;
         
         String information[] = input.split(",");
-
+        
         if (information.length != 4) {
             return false;
         }
-
+        
         for (int i = 0; i < (LOCS.length - 1); i++) {
             if (information[1] == LOCS[i]) {
                 validFrom = true;
@@ -170,20 +140,20 @@ public class SafeWalkServer implements Runnable {
         }
         return false;
     }
-
+    
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-    	if (args.length == 0) {
-    		System.out.printf("Port not specified. Using free port %d", DEFAULT_PORT);
-    		SafeWalkServer s = new SafeWalkServer();
-    		s.run();
-    	} else {
-    		try {
-    			int port = Integer.parseInt(args[0]);
-    			SafeWalkServer s = new SafeWalkServer(port);
-    			s.run();
-    		} catch (NumberFormatException e) {
-    			e.printStackTrace();
-    		}
-    	}
-    }		
+        if (args.length == 0) {
+            System.out.printf("Port not specified. Using free port %d", DEFAULT_PORT);
+            SafeWalkServer s = new SafeWalkServer();
+            s.run();
+        } else {
+            try {
+                int port = Integer.parseInt(args[0]);
+                SafeWalkServer s = new SafeWalkServer(port);
+                s.run();
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+    }  
 }
