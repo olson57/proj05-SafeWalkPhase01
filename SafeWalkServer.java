@@ -66,7 +66,6 @@ public class SafeWalkServer implements Runnable {
             new BufferedReader(new InputStreamReader(client.getInputStream()));
                 
             PrintWriter pw = new PrintWriter(os, true);
-	    //pw.println("Will it print on connection?");
 
             String s = "";
             while ((s = br.readLine()) != null) {
@@ -89,10 +88,13 @@ public class SafeWalkServer implements Runnable {
                         return;
                     }
                     pw.flush();
-                } else {
+                } else if (isValidInput(s)){
                     clientInformation.add(s);
                     clients.add(client);
                     pairClients(); 
+                } else {
+                    pw.println("ERROR: invalid request");
+                    client.close();
                 }
             }
         } catch (IOException e) {
