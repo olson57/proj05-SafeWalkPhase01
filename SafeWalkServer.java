@@ -24,6 +24,7 @@ public class SafeWalkServer implements Runnable {
     public SafeWalkServer() throws SocketException, IOException {
         socket = new ServerSocket(DEFAULT_PORT); 
         clients = new ArrayList<Socket>();
+	clientInformation = new ArrayList<String>();
     }
     
     public int getLocalPort() {
@@ -57,6 +58,7 @@ public class SafeWalkServer implements Runnable {
                  new BufferedReader(new InputStreamReader(client.getInputStream()));
                 
                 PrintWriter pw = new PrintWriter(os, true);
+		pw.println("Will it print on connection?");
 
                 String s = "";
                 while ((s = br.readLine()) != null) {
