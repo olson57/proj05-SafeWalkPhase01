@@ -30,10 +30,6 @@ public class SafeWalkServer implements Runnable {
     public int getLocalPort() {
         return port;
     }
-    
-    public synchronized void pairClients() {
-        
-    }
 
     private boolean validPair(String client1Loc, String client2Loc) {
         String[] client1Info = client1Loc.split(",");
@@ -91,7 +87,21 @@ public class SafeWalkServer implements Runnable {
                 } else if (isValidInput(s)){
                     clientInformation.add(s);
                     clients.add(client);
-                    pairClients(); 
+                    
+		    for (int i = 0; i < clientInformation.size(); i++) {
+			if (validPair(clientInformation.get(i), s) && 
+			    (!clientInformation.get(i).equals(s))) {
+			    PrintWriter pw1 = new PrintWriter(clients.get(i).getOutputStream(), true);
+			    
+			    pw.println("RESPONSE: " + clientInformation.get(i));
+			    pw1.println("RESPONSE: " + s);
+			    clients.get(i).close();
+			    clients.remove(clients.get(i));
+			    
+			    client.close();
+			    clients.remove(client);
+			}
+		    }
                 } else {
                     pw.println("ERROR: invalid request");
                     client.close();
