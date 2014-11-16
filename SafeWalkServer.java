@@ -153,7 +153,7 @@ public class SafeWalkServer implements Runnable {
     }
     
     private boolean isValidPort(int port) {
-        if (port > 1025 && port < 65535) {
+        if (port >= 1025 && port <= 65535) {
             return true;
         }
         return false;
