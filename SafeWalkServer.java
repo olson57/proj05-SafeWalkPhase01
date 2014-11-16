@@ -51,10 +51,10 @@ public class SafeWalkServer implements Runnable {
     public void run() {
         while (true) {
 	       try {
-		      Socket client = socket.accept();
-		      parseInput(client);
+		   Socket client = socket.accept();
+		   parseInput(client);
 	       } catch (IOException e) {
-		      e.printStackTrace();
+		   e.printStackTrace();
 	       }
         }
     }
@@ -66,7 +66,7 @@ public class SafeWalkServer implements Runnable {
             new BufferedReader(new InputStreamReader(client.getInputStream()));
                 
             PrintWriter pw = new PrintWriter(os, true);
-        //pw.println("Will it print on connection?");
+	    //pw.println("Will it print on connection?");
 
             String s = "";
             while ((s = br.readLine()) != null) {
@@ -96,7 +96,7 @@ public class SafeWalkServer implements Runnable {
                 }
             }
         } catch (IOException e) {
-                e.printStackTrace();
+	       e.printStackTrace();
         }     
     }
     
