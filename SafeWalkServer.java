@@ -141,13 +141,13 @@ public class SafeWalkServer implements Runnable {
         }
         
         for (int i = 0; i < (LOCS.length - 1); i++) {
-            if (information[1] == LOCS[i]) {
+            if (information[1].equals(LOCS[i])) {
                 validFrom = true;
             }
         }
         
         for (int i = 0; i < LOCS.length; i++) {
-            if (information[2] == LOCS[i] && information[2] != information[1]) {
+            if (information[2].equals(LOCS[i]) && !information[2].equals(information[1])) {
                 validTo = true;
             }
         }
