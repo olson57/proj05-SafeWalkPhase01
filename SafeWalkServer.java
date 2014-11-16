@@ -85,6 +85,7 @@ public class SafeWalkServer implements Runnable {
                     }
                     pw.flush();
                 } else if (isValidInput(s)){
+		    pw.println("Valid Input");
                     clientInformation.add(s);
                     clients.add(client);
                     
