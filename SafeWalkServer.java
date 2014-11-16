@@ -59,9 +59,8 @@ public class SafeWalkServer implements Runnable {
                 PrintWriter pw = new PrintWriter(os, true);
 
                 String s = "";
-                String input = "";
                 while ((s = br.readLine()) != null) {
-                    if (inputIsCommand(input)) {
+                    if (inputIsCommand(s)) {
                         if (input.equals(":LIST_PENDING_REQUESTS")) {
                             pw.println(clientInformation.toString());
                         } else if (input.equals(":RESET")) {
@@ -81,7 +80,7 @@ public class SafeWalkServer implements Runnable {
                         }
                         pw.flush();
                     } else {
-                        clientInformation.add(input);
+                        clientInformation.add(s);
                         clients.add(client);
                         pairClients(); 
                     }
