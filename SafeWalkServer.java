@@ -110,9 +110,7 @@ public class SafeWalkServer implements Runnable {
                     client.close();
                 }
             }
-        } catch (IOException e) {
-	       e.printStackTrace();
-        }     
+        } catch (IOException e) {}     
     }
     
     private boolean inputIsCommand(String input) {
