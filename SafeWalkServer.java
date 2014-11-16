@@ -20,7 +20,7 @@ public class SafeWalkServer implements Runnable {
             System.out.printf("Invalid port.");
         }
     }
-    
+
     public SafeWalkServer() throws SocketException, IOException {
         socket = new ServerSocket(DEFAULT_PORT); 
         clients = new ArrayList<Socket>();
