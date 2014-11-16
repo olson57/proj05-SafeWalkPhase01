@@ -50,18 +50,54 @@ public class SafeWalkServer implements Runnable {
 
     public void run() {
         while (true) {
-	    try {
-		Socket client = socket.accept();
-		parseInput(client);
-	    } catch (IOException e) {
-		e.printStackTrace();
-	    }
+	       try {
+		      Socket client = socket.accept();
+		      parseInput(client);
+	       } catch (IOException e) {
+		      e.printStackTrace();
+	       }
         }
     }
 
     public synchronized void parseInput(Socket client) {
-	
+	   try {
+            OutputStream os = client.getOutputStream();
+            BufferedReader br = 
+            new BufferedReader(new InputStreamReader(client.getInputStream()));
+                
+            PrintWriter pw = new PrintWriter(os, true);
+        //pw.println("Will it print on connection?");
 
+            String s = "";
+            while ((s = br.readLine()) != null) {
+                if (inputIsCommand(s)) {
+                    if (s.equals(":LIST_PENDING_REQUESTS")) {
+                        pw.println(clientInformation.toString());
+                    } else if (s.equals(":RESET")) {
+                        for (int i = 0; i < clients.size(); i++) {
+                                clients.get(i).close();
+                        }
+                    } else if (s.equals(":SHUTDOWN")) {
+                        for (int i = 0; i < clients.size(); i++) {
+                                clients.get(i).close();
+                        }
+                        
+                        br.close();
+                        pw.flush();
+                        pw.close();
+                        socket.close();
+                        return;
+                    }
+                    pw.flush();
+                } else {
+                    clientInformation.add(s);
+                    clients.add(client);
+                    pairClients(); 
+                }
+            }
+        } catch (IOException e) {
+                e.printStackTrace();
+        }     
     }
     
     private boolean inputIsCommand(String input) {
