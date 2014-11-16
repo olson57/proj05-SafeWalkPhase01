@@ -88,18 +88,20 @@ public class SafeWalkServer implements Runnable {
                     clientInformation.add(s);
                     clients.add(client);
                     
-		    for (int i = 0; i < clientInformation.size(); i++) {
-			if (validPair(clientInformation.get(i), s) && 
-			    (!clientInformation.get(i).equals(s))) {
-			    PrintWriter pw1 = new PrintWriter(clients.get(i).getOutputStream(), true);
+		    if(clientInformation.size() > 1) {
+			for (int i = 0; i < clientInformation.size(); i++) {
+			    if (validPair(clientInformation.get(i), s) && 
+				(!clientInformation.get(i).equals(s))) {
+				PrintWriter pw1 = new PrintWriter(clients.get(i).getOutputStream(), true);
 			    
-			    pw.println("RESPONSE: " + clientInformation.get(i));
-			    pw1.println("RESPONSE: " + s);
-			    clients.get(i).close();
-			    clients.remove(clients.get(i));
+				pw.println("RESPONSE: " + clientInformation.get(i));
+				pw1.println("RESPONSE: " + s);
+				clients.get(i).close();
+				clients.remove(clients.get(i));
 			    
-			    client.close();
-			    clients.remove(client);
+				client.close();
+				clients.remove(client);
+			    }
 			}
 		    }
                 } else {
