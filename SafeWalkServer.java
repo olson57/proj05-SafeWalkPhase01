@@ -61,36 +61,34 @@ public class SafeWalkServer implements Runnable {
                 String s = "";
                 String input = "";
                 while ((s = br.readLine()) != null) {
-                    input = s;
-                }
-
-                if (inputIsCommand(input)) {
-                    if (input.equals(":LIST_PENDING_REQUESTS")) {
-                        pw.println(clientInformation.toString());
-                    } else if (input.equals(":RESET")) {
-                        for (int i = 0; i < clients.size(); i++) {
-                            clients.get(i).close();
-                        }
-                    } else if (input.equals(":SHUTDOWN")) {
-                        for (int i = 0; i < clients.size(); i++) {
-                            clients.get(i).close();
-                        }
+                    if (inputIsCommand(input)) {
+                        if (input.equals(":LIST_PENDING_REQUESTS")) {
+                            pw.println(clientInformation.toString());
+                        } else if (input.equals(":RESET")) {
+                            for (int i = 0; i < clients.size(); i++) {
+                                clients.get(i).close();
+                            }
+                        } else if (input.equals(":SHUTDOWN")) {
+                            for (int i = 0; i < clients.size(); i++) {
+                                clients.get(i).close();
+                            }
                         
-                        br.close();
+                            br.close();
+                            pw.flush();
+                            pw.close();
+                            socket.close();
+                            return;
+                        }
                         pw.flush();
-                        pw.close();
-                        socket.close();
-                        return;
+                    } else {
+                        clientInformation.add(input);
+                        clients.add(client);
+                        pairClients(); 
                     }
-                    pw.flush();
-                } else {
-                    clientInformation.add(input);
-                    clients.add(client);
-                    pairClients(); 
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }      
         }
     }
     
