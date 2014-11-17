@@ -89,7 +89,8 @@ public class SafeWalkServer implements Runnable {
 			    pwOtherUsers.close();
                         }
 
-			pw.println("RESPONSE: success"); 
+			pw.println("RESPONSE: success");
+			client.close();
                     } else if (s.equals(":SHUTDOWN")) {
                         for (int i = 0; i < clients.size(); i++) {     
 			    OutputStream osOtherUsers = clients.get(i).getOutputStream();
