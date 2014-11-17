@@ -45,13 +45,15 @@ public class SafeWalkServer implements Runnable {
 
     public void run() {
         while (true) {
-        try {
+	    try {
                 Socket client = socket.accept();
                 Object o = new Object();
                 synchronized (o) {
                     parseInput(client);
                 }
-        } catch (IOException e) {}
+	    } catch (IOException e) {
+		return;
+	    }
         }
     }
 
@@ -68,20 +70,29 @@ public class SafeWalkServer implements Runnable {
                 if (inputIsCommand(s)) {
                     if (s.equals(":LIST_PENDING_REQUESTS")) {
                         pw.println(clientInformation.toString());
+			client.close();
                     } else if (s.equals(":RESET")) {
                         for (int i = 0; i < clients.size(); i++) {
-                                clients.get(i).close();
+			    OutputStream osOtherUsers = clients.get(i).getOutputStream();
+			    PrintWriter pwOtherUsers = new PrintWriter(osOtherUsers, true);
+			    pwOtherUsers.println("ERROR: connection reset");
+			    clients.get(i).close();
                         }
+
+			pw.println("RESPONSE: success"); 
                     } else if (s.equals(":SHUTDOWN")) {
-                        for (int i = 0; i < clients.size(); i++) {
-                                clients.get(i).close();
+                        for (int i = 0; i < clients.size(); i++) {     
+			    OutputStream osOtherUsers = clients.get(i).getOutputStream();
+                            PrintWriter pwOtherUsers = new PrintWriter(osOtherUsers, true);
+                            pwOtherUsers.println("ERROR: connection reset");
+			    clients.get(i).close();
                         }
                         
                         br.close();
                         pw.flush();
                         pw.close();
                         socket.close();
-                        return;
+			throw new IOException();
                     }
                     pw.flush();
                 } else if (isValidInput(s)) {
