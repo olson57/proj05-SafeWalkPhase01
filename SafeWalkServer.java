@@ -23,7 +23,7 @@ public class SafeWalkServer implements Runnable {
     public SafeWalkServer() throws SocketException, IOException {
         socket = new ServerSocket(0); 
         clients = new ArrayList<Socket>();
-	   clientInformation = new ArrayList<String>();
+    clientInformation = new ArrayList<String>();
     }
     
     public int getLocalPort() {
@@ -45,15 +45,18 @@ public class SafeWalkServer implements Runnable {
 
     public void run() {
         while (true) {
-	       try {
-		      Socket client = socket.accept();
-		      parseInput(client);
-	       } catch (IOException e) {}
+        try {
+                Socket client = socket.accept();
+                Object o = new Object();
+                synchronized (o) {
+                    parseInput(client);
+                }
+        } catch (IOException e) {}
         }
     }
 
     public void parseInput(Socket client) {
-	   try {
+    try {
             OutputStream os = client.getOutputStream();
             BufferedReader br = 
             new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -88,16 +91,16 @@ public class SafeWalkServer implements Runnable {
                     if (clientInformation.size() > 1) {
                         for (int i = 0; i < clientInformation.size(); i++) {
                             if (validPair(clientInformation.get(i), s) && 
-				            (!clientInformation.get(i).equals(s))) {
-				                PrintWriter pw1 = new PrintWriter(clients.get(i).getOutputStream(), true);
-			    
-				                pw.println("RESPONSE: " + clientInformation.get(i));
-				                pw1.println("RESPONSE: " + s);
-				                clients.get(i).close();
-				                clients.remove(clients.get(i));
-			    
-				                client.close();
-				                clients.remove(client);
+                (!clientInformation.get(i).equals(s))) {
+                    PrintWriter pw1 = new PrintWriter(clients.get(i).getOutputStream(), true);
+       
+                    pw.println("RESPONSE: " + clientInformation.get(i));
+                    pw1.println("RESPONSE: " + s);
+                    clients.get(i).close();
+                    clients.remove(clients.get(i));
+       
+                    client.close();
+                    clients.remove(client);
                             }
                         }
                     }
@@ -158,8 +161,8 @@ public class SafeWalkServer implements Runnable {
     
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         if (args.length == 0) {
-            System.out.printf("Port not specified. Using free port %d", DEFAULT_PORT);
             SafeWalkServer s = new SafeWalkServer();
+            System.out.printf("Port not specified. Using free port %d.", s.getLocalPort());
             s.run();
         } else {
             try {
