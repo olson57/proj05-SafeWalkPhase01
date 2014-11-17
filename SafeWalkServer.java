@@ -35,9 +35,14 @@ public class SafeWalkServer implements Runnable {
         String[] client2Info = client2Loc.split(",");
 
         if (client1Info[1].equals(client2Info[1])) {
-            if (client1Info[2].equals("*") || client2Info[2].equals("*")) {
+            if ((client1Info[2].equals("*") || client2Info[2].equals("*")) && 
+		!(client1Info[2].equals("*") && client1Info[2].equals("*"))) {
                 return true;
             }
+
+	    if (client1Info[2].equals(client2Info[2])) {
+
+	    }
         }
         
         return false;
@@ -97,7 +102,7 @@ public class SafeWalkServer implements Runnable {
 			    osOtherUsers.close();
 			    pwOtherUsers.close();
                         }
-                        
+			pw.println("RESPONSE: success");
                         br.close();
                         pw.flush();
                         pw.close();
