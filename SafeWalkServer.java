@@ -23,7 +23,7 @@ public class SafeWalkServer implements Runnable {
     public SafeWalkServer() throws SocketException, IOException {
         socket = new ServerSocket(0); 
         clients = new ArrayList<Socket>();
-    clientInformation = new ArrayList<String>();
+	clientInformation = new ArrayList<String>();
     }
     
     public int getLocalPort() {
@@ -64,7 +64,7 @@ public class SafeWalkServer implements Runnable {
             PrintWriter pw = new PrintWriter(os, true);
 
             String s = "";
-            while ((s = br.readLine()) != null) {
+            if ((s = br.readLine()) != null) {
                 if (inputIsCommand(s)) {
                     if (s.equals(":LIST_PENDING_REQUESTS")) {
                         pw.println(clientInformation.toString());
