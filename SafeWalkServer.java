@@ -7,9 +7,8 @@ public class SafeWalkServer implements Runnable {
                                   "PMU", "PUSH", "*"};
     private int port;
     private ServerSocket socket;
-    public static final int DEFAULT_PORT = 4242;
-    private volatile ArrayList<Socket> clients;
-    private volatile ArrayList<String> clientInformation;
+    private ArrayList<Socket> clients;
+    private ArrayList<String> clientInformation;
     
     public SafeWalkServer(int port) throws SocketException, IOException {
         if (isValidPort(port)) {
@@ -22,13 +21,13 @@ public class SafeWalkServer implements Runnable {
     }
 
     public SafeWalkServer() throws SocketException, IOException {
-        socket = new ServerSocket(DEFAULT_PORT); 
+        socket = new ServerSocket(0); 
         clients = new ArrayList<Socket>();
-	clientInformation = new ArrayList<String>();
+	   clientInformation = new ArrayList<String>();
     }
     
     public int getLocalPort() {
-        return port;
+        return socket.getLocalPort();
     }
 
     private boolean validPair(String client1Loc, String client2Loc) {
@@ -47,15 +46,13 @@ public class SafeWalkServer implements Runnable {
     public void run() {
         while (true) {
 	       try {
-		   Socket client = socket.accept();
-		   parseInput(client);
-	       } catch (IOException e) {
-		   e.printStackTrace();
-	       }
+		      Socket client = socket.accept();
+		      parseInput(client);
+	       } catch (IOException e) {}
         }
     }
 
-    public synchronized void parseInput(Socket client) {
+    public void parseInput(Socket client) {
 	   try {
             OutputStream os = client.getOutputStream();
             BufferedReader br = 
@@ -84,27 +81,26 @@ public class SafeWalkServer implements Runnable {
                         return;
                     }
                     pw.flush();
-                } else if (isValidInput(s)){
-		    pw.println("Valid Input");
+                } else if (isValidInput(s)) {
                     clientInformation.add(s);
                     clients.add(client);
                     
-		    if(clientInformation.size() > 1) {
-			for (int i = 0; i < clientInformation.size(); i++) {
-			    if (validPair(clientInformation.get(i), s) && 
-				(!clientInformation.get(i).equals(s))) {
-				PrintWriter pw1 = new PrintWriter(clients.get(i).getOutputStream(), true);
+                    if (clientInformation.size() > 1) {
+                        for (int i = 0; i < clientInformation.size(); i++) {
+                            if (validPair(clientInformation.get(i), s) && 
+				            (!clientInformation.get(i).equals(s))) {
+				                PrintWriter pw1 = new PrintWriter(clients.get(i).getOutputStream(), true);
 			    
-				pw.println("RESPONSE: " + clientInformation.get(i));
-				pw1.println("RESPONSE: " + s);
-				clients.get(i).close();
-				clients.remove(clients.get(i));
+				                pw.println("RESPONSE: " + clientInformation.get(i));
+				                pw1.println("RESPONSE: " + s);
+				                clients.get(i).close();
+				                clients.remove(clients.get(i));
 			    
-				client.close();
-				clients.remove(client);
-			    }
-			}
-		    }
+				                client.close();
+				                clients.remove(client);
+                            }
+                        }
+                    }
                 } else {
                     pw.println("ERROR: invalid request");
                     client.close();
