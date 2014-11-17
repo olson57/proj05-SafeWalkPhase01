@@ -62,6 +62,25 @@ public class SafeWalkServer implements Runnable {
         }
     }
 
+    private String formatPendingRequests() {
+	String result = "[";
+	for (int i = 0; i < clientInformation.size(); i++) {
+	    result += "[";
+	    String[] temp = clientInformation.get(i).split(",");
+	    if (i != (clientInformation.size() - 1)) {
+		for (int j = 0; j < temp.length; j++) {
+		    result += i != (temp.length - 1) ? temp[i].concat(", ") : temp[i].concat("], ");
+		}
+	    } else {
+		for (int j = 0; j < temp.length; j++) {
+		    result += i != (temp.length - 1) ? temp[i].concat(", ") : temp[i].concat("]]");
+		}
+	    }
+	}
+
+	return result;
+    }
+
     public void parseInput(Socket client) {
     try {
             OutputStream os = client.getOutputStream();
@@ -74,7 +93,7 @@ public class SafeWalkServer implements Runnable {
             if ((s = br.readLine()) != null) {
                 if (inputIsCommand(s)) {
                     if (s.equals(":LIST_PENDING_REQUESTS")) {
-                        pw.println(clientInformation.toString());
+                        pw.println(formatPendingRequests());
 			client.close();
                     } else if (s.equals(":RESET")) {
                         for (int i = 0; i < clients.size(); i++) {
