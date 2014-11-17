@@ -36,7 +36,7 @@ public class SafeWalkServer implements Runnable {
 
         if (client1Info[1].equals(client2Info[1])) {
             if ((client1Info[2].equals("*") || client2Info[2].equals("*")) && 
-		!(client1Info[2].equals("*") && client1Info[2].equals("*"))) {
+		(!(client1Info[2].equals("*") && client2Info[2].equals("*")))) {
                 return true;
             }
 
@@ -69,11 +69,11 @@ public class SafeWalkServer implements Runnable {
 	    String[] temp = clientInformation.get(i).split(",");
 	    if (i != (clientInformation.size() - 1)) {
 		for (int j = 0; j < temp.length; j++) {
-		    result += i != (temp.length - 1) ? temp[i].concat(", ") : temp[i].concat("], ");
+		    result += j != (temp.length - 1) ? temp[j].concat(", ") : temp[j].concat("], ");
 		}
 	    } else {
 		for (int j = 0; j < temp.length; j++) {
-		    result += i != (temp.length - 1) ? temp[i].concat(", ") : temp[i].concat("]]");
+		    result += j != (temp.length - 1) ? temp[j].concat(", ") : temp[j].concat("]]");
 		}
 	    }
 	}
