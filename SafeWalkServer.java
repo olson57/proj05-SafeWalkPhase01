@@ -76,7 +76,12 @@ public class SafeWalkServer implements Runnable {
 			    OutputStream osOtherUsers = clients.get(i).getOutputStream();
 			    PrintWriter pwOtherUsers = new PrintWriter(osOtherUsers, true);
 			    pwOtherUsers.println("ERROR: connection reset");
+			    clientInformation.remove(clientInformation.get(i));
 			    clients.get(i).close();
+			    clients.remove(clients.get(i));
+
+			    osOtherUsers.close();
+			    pwOtherUsers.close();
                         }
 
 			pw.println("RESPONSE: success"); 
@@ -85,7 +90,12 @@ public class SafeWalkServer implements Runnable {
 			    OutputStream osOtherUsers = clients.get(i).getOutputStream();
                             PrintWriter pwOtherUsers = new PrintWriter(osOtherUsers, true);
                             pwOtherUsers.println("ERROR: connection reset");
+			    clientInformation.remove(clientInformation.get(i));
 			    clients.get(i).close();
+			    clients.remove(clients.get(i));
+
+			    osOtherUsers.close();
+			    pwOtherUsers.close();
                         }
                         
                         br.close();
@@ -102,16 +112,18 @@ public class SafeWalkServer implements Runnable {
                     if (clientInformation.size() > 1) {
                         for (int i = 0; i < clientInformation.size(); i++) {
                             if (validPair(clientInformation.get(i), s) && 
-                (!clientInformation.get(i).equals(s))) {
-                    PrintWriter pw1 = new PrintWriter(clients.get(i).getOutputStream(), true);
+				(!clientInformation.get(i).equals(s))) {
+				PrintWriter pw1 = new PrintWriter(clients.get(i).getOutputStream(), true);
        
-                    pw.println("RESPONSE: " + clientInformation.get(i));
-                    pw1.println("RESPONSE: " + s);
-                    clients.get(i).close();
-                    clients.remove(clients.get(i));
-       
-                    client.close();
-                    clients.remove(client);
+				pw.println("RESPONSE: " + clientInformation.get(i));
+				pw1.println("RESPONSE: " + s);
+				clients.get(i).close();
+				clientInformation.remove(clientInformation.get(i));
+				clients.remove(clients.get(i));
+				
+				client.close();
+				clientInformation.remove(s);
+				clients.remove(client);
                             }
                         }
                     }
