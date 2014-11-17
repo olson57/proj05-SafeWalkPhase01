@@ -41,7 +41,7 @@ public class SafeWalkServer implements Runnable {
             }
 
 	    if (client1Info[2].equals(client2Info[2])) {
-
+		return true;
 	    }
         }
         
