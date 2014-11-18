@@ -5,7 +5,6 @@ import java.util.ArrayList;
 public class SafeWalkServer implements Runnable {
     public final String[] LOCS = {"CL50", "EE", "LWSN", 
                                   "PMU", "PUSH", "*"};
-    private int port;
     private ServerSocket socket;
     private ArrayList<Socket> clients;
     private ArrayList<String> clientInformation;
@@ -81,7 +80,7 @@ public class SafeWalkServer implements Runnable {
 	return result;
     }
 
-    public void parseInput(Socket client) {
+    public synchronized void parseInput(Socket client) {
     try {
             OutputStream os = client.getOutputStream();
             BufferedReader br = 
@@ -175,7 +174,6 @@ public class SafeWalkServer implements Runnable {
     }
     
     private boolean isValidInput(String input) {
-        String temp = input;
         boolean validFrom = false;
         boolean validTo = false;
         
